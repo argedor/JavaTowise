@@ -2,15 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.argedor</groupId>
   <artifactId>com.github.argedor</artifactId>
-  <version>1.0.0</version>
-  
-  <licenses>
-    <license>
-      <name>Towise License</name>
-      <url>https://github.com/argedor/JavaTowise/blob/master/LICENSE-1.0.0.txt</url>
-      <distribution>repo</distribution>
-    </license>
-  </licenses>
+  <version>0.0.1-SNAPSHOT</version>
   <build>
     <sourceDirectory>src</sourceDirectory>
     <plugins>
@@ -67,19 +59,13 @@
         </execution>
       </executions>
     </plugin>
-  <plugin>
+    <plugin>
       <groupId>org.apache.maven.plugins</groupId>
       <artifactId>maven-gpg-plugin</artifactId>
       <version>1.5</version>
-      <executions>
-        <execution>
-          <id>sign-artifacts</id>
-          <phase>verify</phase>
-          <goals>
-            <goal>sign</goal>
-          </goals>
-        </execution>
-      </executions>
+      <configuration>
+        <skip>true</skip>
+    	</configuration>
     </plugin>
     
     <plugin>

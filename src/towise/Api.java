@@ -142,7 +142,7 @@ public class Api
 	
 	
 	/*Veritabanına kişi siler*/
-	public JSONObject removePerson(int person_id, String person_name) throws IOException
+	public JSONObject RemovePerson(int person_id, String person_name) throws IOException
 	{
 		this.postString = "person_id="+person_id+"&persone_name="+person_name+"&apitxt=addperson";
 		HttpURLConnection httpcon = this.httpCo();
