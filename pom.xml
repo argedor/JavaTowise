@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.argedor</groupId>
   <artifactId>com.github.argedor</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.2</version>
   
   <licenses>
     <license>
@@ -22,6 +22,7 @@
           <target>1.8</target>
         </configuration>
       </plugin>
+      
       
       <plugin>
                 <groupId>org.sonatype.plugins</groupId>
@@ -134,5 +135,15 @@
 	    <artifactId>json-simple</artifactId>
 	    <version>1.1</version>
 	</dependency>
+	<!-- https://mvnrepository.com/artifact/uk.gov.gchq.gaffer/bitmap-library -->
+<!-- https://mvnrepository.com/artifact/com.google.android/android -->
+<dependency>
+    <groupId>com.google.android</groupId>
+    <artifactId>android</artifactId>
+    <version>2.3.1</version>
+    <scope>provided</scope>
+</dependency>
+
+	
   </dependencies>
 </project>

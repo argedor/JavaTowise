@@ -1,18 +1,19 @@
 package towise;
 
-import java.io.BufferedReader;
-import java.io.DataOutputStream;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
+
+import javax.imageio.ImageIO;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+import android.graphics.Bitmap;
 /*
  * TOWISE API v1.0
  * 
@@ -25,157 +26,200 @@ public class Api
 	public String AppId = "1";
 	
 	private String url = "https://towise.io/towise-api/v1";
-	private String postString = "";
+	private static int IMG_WIDTH = 400;
+	private static int IMG_HEIGHT = 400;
+	ByteArrayOutputStream tmp=new ByteArrayOutputStream();
 	
-	/*Api bağlantı sağlar.*/
-	private HttpURLConnection httpCo() throws MalformedURLException, IOException
-	{
-		HttpURLConnection httpcon = (HttpURLConnection) ((new URL(url).openConnection()));
-		byte[] postData = this.postString.getBytes( StandardCharsets.UTF_8 );
-		httpcon.setDoOutput(true);
-		httpcon.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-		httpcon.setRequestProperty("Content-Length", Integer.toString( postData.length ));
-		httpcon.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.95 Safari/537.11");
-		httpcon.setRequestMethod("POST");
-		try( DataOutputStream wr = new DataOutputStream( httpcon.getOutputStream())) {
-			wr.write( postData );
+    public JSONObject FaceDetect(BufferedImage originalImage)
+    {
+    	try {
+			MultipartUtility multiple = new MultipartUtility(this.url, "UTF-8");
+			multiple.addFormField("getface", "1");
+			multiple.addFormField("apitxt", "getface");
+			multiple.addFormField("AppKey", this.AppKey);
+			multiple.addFormField("AppId", this.AppId);
+			File f = File.createTempFile("tmp","jpg",null);
+			ImageIO.write(originalImage, "jpg", f);
+			multiple.addFilePart("upload",f);
+			String response = multiple.finish();
+			f.delete();
+			
+			JSONParser parser = new JSONParser();
+	        JSONObject json;
+			
+	        try 
+	        {
+				json = (JSONObject) parser.parse(response);
+				return json;
+			} 
+	        catch (ParseException e) 
+	        {
+				System.out.println("Hata:"+response);
+			}
+	        
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return httpcon;
-	}
-	
-	private JSONObject httpResponse(HttpURLConnection httpcon) throws IOException
-	{
-		int status = httpcon.getResponseCode();
-		System.out.println("Status:"+status);
-		switch (status) 
-		{
-	        case 200:
-	           BufferedReader br = new BufferedReader(new InputStreamReader(httpcon.getInputStream()));
-	           StringBuilder sb = new StringBuilder();
-	           String line;
-	           while ((line = br.readLine()) != null) {
-	                sb.append(line+"\n");
-	           }
-	           br.close();
-	           System.out.println(sb.toString());
-	           JSONParser parser = new JSONParser();
-	           JSONObject json;
+    	return null;
+    }
+    
+    
+    public JSONObject FaceDetect(Bitmap originalImage)
+    {
+    	
+    	try {
+			MultipartUtility multiple = new MultipartUtility(this.url, "UTF-8");
+			multiple.addFormField("getface", "1");
+			multiple.addFormField("apitxt", "getface");
+			multiple.addFormField("AppKey", this.AppKey);
+			multiple.addFormField("AppId", this.AppId);
+			File f = File.createTempFile("tmp","jpg",null);
+			FileOutputStream out = new FileOutputStream(f);
+			originalImage.compress(Bitmap.CompressFormat.JPEG, 90, out);
+			multiple.addFilePart("upload",f);
+			String response = multiple.finish();
+			f.delete();
+			
+			JSONParser parser = new JSONParser();
+	        JSONObject json;
+			
+	        try 
+	        {
+				json = (JSONObject) parser.parse(response);
+				return json;
+			} 
+	        catch (ParseException e) 
+	        {
+				System.out.println("Hata:"+response);
+			}
+	        
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return null;
+    }
+    
+    public JSONObject FaceDetect(String originalImage)
+    {
+    	try {
+			MultipartUtility multiple = new MultipartUtility(this.url, "UTF-8");
+			multiple.addFormField("getface", "1");
+			multiple.addFormField("apitxt", "getface");
+			multiple.addFormField("AppKey", this.AppKey);
+			multiple.addFormField("AppId", this.AppId);
+			multiple.addFormField("image_url",originalImage);
+			String response = multiple.finish();
+			JSONParser parser = new JSONParser();
+	        JSONObject json;
 			try {
-				json = (JSONObject) parser.parse(sb.toString());
+				json = (JSONObject) parser.parse(response);
 				return json;
 			} catch (ParseException e) {
-				e.printStackTrace();
+				System.out.println(response);
 			}
-	           return null;
-	        case 403:
-	        	System.out.println("403 error");
-	        	System.out.println(httpcon.getErrorStream());
-	        	return null;
+			
+			
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		return null;
-	}
-	
-	/*Verilen resimdeki yüzleri algılar.*/
-	public JSONObject FaceDetect(String imageurl) throws IOException
+    	
+    	return null;
+    }
+    
+    
+    public JSONObject AddPerson(String namesurname, int id)
+    {
+    	try {
+			MultipartUtility multiple = new MultipartUtility(this.url, "UTF-8");
+			multiple.addFormField("AddPerson", "1");
+			multiple.addFormField("id", String.valueOf(id));
+			multiple.addFormField("name",namesurname);
+			multiple.addFormField("AppKey", this.AppKey);
+			multiple.addFormField("AppId", this.AppId);
+			multiple.addFormField("apitxt", "AddPerson");
+			String response = multiple.finish();
+			
+			JSONParser parser = new JSONParser();
+	        JSONObject json;
+	        try 
+	        {
+				json = (JSONObject) parser.parse(response);
+				return json;
+			} 
+	        catch (ParseException e) 
+	        {
+				System.out.println("Hata:"+response);
+			}
+	        
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return null;
+    }
+    
+    
+    public JSONObject AddFace(BufferedImage originalImage, int person_id)
+    {
+    	try {
+			MultipartUtility multiple = new MultipartUtility(this.url, "UTF-8");
+			multiple.addFormField("AddFace", "1");
+			multiple.addFormField("apitxt", "AddFace");
+			multiple.addFormField("AppKey", this.AppKey);
+			multiple.addFormField("AppId", this.AppId);
+			multiple.addFormField("id", String.valueOf(person_id));
+			File f = File.createTempFile("tmp","jpg",null);
+			ImageIO.write(originalImage, "jpg", f);
+			multiple.addFilePart("upload",f);
+			String response = multiple.finish();
+			f.delete();
+			
+			JSONParser parser = new JSONParser();
+	        JSONObject json;
+			
+	        try 
+	        {
+				json = (JSONObject) parser.parse(response);
+				return json;
+			} 
+	        catch (ParseException e) 
+	        {
+				System.out.println("Hata:"+response);
+			}
+	        
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return null;
+    }
+    
+    
+   
+    
+	private static BufferedImage resizeImage(BufferedImage originalImage, int type)
 	{
-		this.postString = "imgurl="+imageurl+"&apitxt=getface";
-		HttpURLConnection httpcon = this.httpCo();
-		httpcon.connect();
-		return httpResponse(httpcon);
-	}
-	
-	/*Verilen resimdeki yüzleri ve duygularını algılar.*/
-	public JSONObject EmotionDetect(String imageurl) throws IOException
-	{
-		this.postString = "imgurl="+imageurl+"&apitxt=age3";
-		HttpURLConnection httpcon = this.httpCo();
-		httpcon.connect();
-		return httpResponse(httpcon);
-	}
-	
-	/*Verilen resimdeki vücutları algılar.*/
-	public JSONObject BodyDetect(String imageurl) throws IOException
-	{
-		this.postString = "imgurl="+imageurl+"&apitxt=bodies";
-		HttpURLConnection httpcon = this.httpCo();
-		httpcon.connect();
-		return httpResponse(httpcon);
-	}
-	
-	/*Verilen resimdeki yüzlerin benzerlerini verir.*/
-	public JSONObject FaceComparing(String imageurl) throws IOException
-	{
-		this.postString = "imgurl="+imageurl+"&apitxt=comparing";
-		HttpURLConnection httpcon = this.httpCo();
-		httpcon.connect();
-		return httpResponse(httpcon);
-	}
-	
-	
-	/*Veritabanına kişileri listeler*/
-	public JSONObject GetAllPerson() throws IOException
-	{
-		this.postString = "apitxt=getallperson";
-		HttpURLConnection httpcon = this.httpCo();
-		httpcon.connect();
-		return httpResponse(httpcon);
-	}
-	
-	/*Veritabanına belli kişiyi getirir*/
-	public JSONObject GetPerson() throws IOException
-	{
-		this.postString = "apitxt=getperson";
-		HttpURLConnection httpcon = this.httpCo();
-		httpcon.connect();
-		return httpResponse(httpcon);
-	}
-	
-	
-	/*Veritabanına kişi ekler*/
-	public JSONObject AddPerson(int person_id, String person_name) throws IOException
-	{
-		this.postString = "person_id="+person_id+"&persone_name="+person_name+"&apitxt=addperson";
-		HttpURLConnection httpcon = this.httpCo();
-		httpcon.connect();
-		return httpResponse(httpcon);
-	}
-	
-	
-	/*Veritabanına kişi siler*/
-	public JSONObject RemovePerson(int person_id, String person_name) throws IOException
-	{
-		this.postString = "person_id="+person_id+"&persone_name="+person_name+"&apitxt=addperson";
-		HttpURLConnection httpcon = this.httpCo();
-		httpcon.connect();
-		return httpResponse(httpcon);
-	}
-	
-	
-	/*Veritabanına kişiye bir resim tanımlar*/
-	public JSONObject AddFace(int person_id, String imgurl) throws IOException
-	{
-		this.postString = "person_id="+person_id+"&url="+imgurl+"&apitxt=addface";
-		HttpURLConnection httpcon = this.httpCo();
-		httpcon.connect();
-		return httpResponse(httpcon);
-	}
-	
-	/*Persone tanımlanmış tüm yüzleri siler*/
-	public JSONObject RemoveAllFace(int person_id) throws IOException
-	{
-		this.postString = "person_id="+person_id+"&apitxt=addface";
-		HttpURLConnection httpcon = this.httpCo();
-		httpcon.connect();
-		return httpResponse(httpcon);
-	}
-	
-	/*Persone tanımlanmış face siler*/
-	public JSONObject RemoveFace(int face_id) throws IOException
-	{
-		this.postString = "person_id="+face_id+"&apitxt=addface";
-		HttpURLConnection httpcon = this.httpCo();
-		httpcon.connect();
-		return httpResponse(httpcon);
-	}
+		if (originalImage.getWidth() > IMG_WIDTH) 
+		{
+	        IMG_HEIGHT = (IMG_WIDTH * originalImage.getHeight()) / originalImage.getWidth();
+	    }
+
+	    // then check if we need to scale even with the new height
+	    if (IMG_HEIGHT > originalImage.getHeight()) 
+	    {
+	    	IMG_WIDTH = (IMG_HEIGHT * originalImage.getWidth()) / originalImage.getHeight();
+	    }
+
+		BufferedImage resizedImage = new BufferedImage(IMG_WIDTH, IMG_HEIGHT, type);
+		Graphics2D g = resizedImage.createGraphics();
+		g.drawImage(originalImage, 0, 0, IMG_WIDTH, IMG_HEIGHT, null);
+		g.dispose();
+		
+		return resizedImage;
+    }
 	
 }
