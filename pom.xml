@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.github.argedor</groupId>
   <artifactId>com.github.argedor</artifactId>
-  <version>1.0.2</version>
+  <version>1.0.6-SNAPSHOT</version>
   
   <licenses>
     <license>

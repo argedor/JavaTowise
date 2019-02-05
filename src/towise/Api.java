@@ -2,8 +2,10 @@ package towise;
 
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
@@ -65,21 +67,18 @@ public class Api
     }
     
     
-    public JSONObject FaceDetect(Bitmap originalImage)
+    public JSONObject FaceDetect(File f)
     {
-    	
+	
     	try {
 			MultipartUtility multiple = new MultipartUtility(this.url, "UTF-8");
 			multiple.addFormField("getface", "1");
 			multiple.addFormField("apitxt", "getface");
 			multiple.addFormField("AppKey", this.AppKey);
 			multiple.addFormField("AppId", this.AppId);
-			File f = File.createTempFile("tmp","jpg",null);
-			FileOutputStream out = new FileOutputStream(f);
-			originalImage.compress(Bitmap.CompressFormat.JPEG, 90, out);
 			multiple.addFilePart("upload",f);
 			String response = multiple.finish();
-			f.delete();
+			//f.delete();
 			
 			JSONParser parser = new JSONParser();
 	        JSONObject json;
@@ -100,6 +99,8 @@ public class Api
 		}
     	return null;
     }
+    
+   
     
     public JSONObject FaceDetect(String originalImage)
     {
@@ -176,7 +177,7 @@ public class Api
 			ImageIO.write(originalImage, "jpg", f);
 			multiple.addFilePart("upload",f);
 			String response = multiple.finish();
-			f.delete();
+			//f.delete();
 			
 			JSONParser parser = new JSONParser();
 	        JSONObject json;
@@ -198,8 +199,104 @@ public class Api
     	return null;
     }
     
-    
    
+    public JSONObject AddFace(File originalImage, int person_id)
+    {
+    	try {
+			MultipartUtility multiple = new MultipartUtility(this.url, "UTF-8");
+			multiple.addFormField("AddFace", "1");
+			multiple.addFormField("apitxt", "AddFace");
+			multiple.addFormField("AppKey", this.AppKey);
+			multiple.addFormField("AppId", this.AppId);
+			multiple.addFormField("id", String.valueOf(person_id));
+			multiple.addFilePart("upload",originalImage);
+			String response = multiple.finish();
+			if(originalImage.exists())
+				originalImage.delete();
+			
+			JSONParser parser = new JSONParser();
+	        JSONObject json;
+			
+	        try 
+	        {
+				json = (JSONObject) parser.parse(response);
+				return json;
+			} 
+	        catch (ParseException e) 
+	        {
+				System.out.println("Hata:"+response);
+			}
+	        
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return null;
+    }
+    
+    public JSONObject GetPerson(int person_id)
+    {
+    	try {
+    		MultipartUtility multiple = new MultipartUtility(this.url, "UTF-8");
+			multiple.addFormField("GetPerson", "1");
+			multiple.addFormField("id", String.valueOf(person_id));
+			multiple.addFormField("AppKey", this.AppKey);
+			multiple.addFormField("AppId", this.AppId);
+			multiple.addFormField("apitxt", "GetPerson");
+			String response = multiple.finish();
+			
+			JSONParser parser = new JSONParser();
+	        JSONObject json;
+			
+	        try 
+	        {
+				json = (JSONObject) parser.parse(response);
+				return json;
+			} 
+	        catch (ParseException e) 
+	        {
+				System.out.println("Hata:"+response);
+			}
+	        
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return null;
+    }
+    
+    public JSONObject GetRecognizeFace(File originalImage)
+    {
+    	try {
+			MultipartUtility multiple = new MultipartUtility(this.url, "UTF-8");
+			multiple.addFormField("getRecognizeFace", "1");
+			multiple.addFormField("apitxt", "getRecognizeFace");
+			multiple.addFormField("AppKey", this.AppKey);
+			multiple.addFormField("AppId", this.AppId);
+			multiple.addFilePart("upload",originalImage);
+			String response = multiple.finish();
+			if(originalImage.exists())
+				originalImage.delete();
+			
+			JSONParser parser = new JSONParser();
+	        JSONObject json;
+			
+	        try 
+	        {
+				json = (JSONObject) parser.parse(response);
+				return json;
+			} 
+	        catch (ParseException e) 
+	        {
+				System.out.println("Hata:"+response);
+			}
+	        
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return null;
+    }
     
 	private static BufferedImage resizeImage(BufferedImage originalImage, int type)
 	{
@@ -222,4 +319,69 @@ public class Api
 		return resizedImage;
     }
 	
+	
+	public JSONObject AgeDetect(File f)
+    {
+	
+    	try {
+			MultipartUtility multiple = new MultipartUtility(this.url, "UTF-8");
+			multiple.addFormField("AgeDetect", "1");
+			multiple.addFormField("apitxt", "AgeDetect");
+			multiple.addFormField("AppKey", this.AppKey);
+			multiple.addFormField("AppId", this.AppId);
+			multiple.addFilePart("upload",f);
+			String response = multiple.finish();
+			
+			JSONParser parser = new JSONParser();
+	        JSONObject json;
+			
+	        try 
+	        {
+				json = (JSONObject) parser.parse(response);
+				return json;
+			} 
+	        catch (ParseException e) 
+	        {
+				System.out.println("Hata:"+response);
+			}
+	        
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return null;
+    }
+	 
+	 
+	public JSONObject EmotionDetect(File f)
+    {
+	
+    	try {
+			MultipartUtility multiple = new MultipartUtility(this.url, "UTF-8");
+			multiple.addFormField("EmotionDetect", "1");
+			multiple.addFormField("apitxt", "EmotionDetect");
+			multiple.addFormField("AppKey", this.AppKey);
+			multiple.addFormField("AppId", this.AppId);
+			multiple.addFilePart("upload",f);
+			String response = multiple.finish();
+			
+			JSONParser parser = new JSONParser();
+	        JSONObject json;
+			
+	        try 
+	        {
+				json = (JSONObject) parser.parse(response);
+				return json;
+			} 
+	        catch (ParseException e) 
+	        {
+				System.out.println("Hata:"+response);
+			}
+	        
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	return null;
+    }
 }
